@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import { useState, useEffect } from 'react'
 
 // local utils
 import Head from 'next/head'
@@ -8,26 +9,31 @@ import styles from '../styles/Home.module.css'
 // local components
 import { DenseTable } from "../src"
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+// external package
+const axios = require('axios').default;
 
 
 const Home: NextPage = () => {
+
+  const [transactionsData, setTransactionsData] = useState<any[]>([])
+
+  useEffect(() => {
+    axios.get('/api/transaction-history')
+    .then(function (response: any) {
+      // handle success
+      setTransactionsData(response.data)
+      console.log(response.data);
+    })
+    .catch(function (error: any) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+  }, [])
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -42,11 +48,10 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
+          Transaction History
         </p>
 
-        <DenseTable rows={rows}></DenseTable>
+        <DenseTable rows={transactionsData}></DenseTable>
       </main>
 
       <footer className={styles.footer}>
@@ -56,9 +61,7 @@ const Home: NextPage = () => {
           rel="noopener noreferrer"
         >
           Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          <code className={styles.code}>pranotoism</code>
         </a>
       </footer>
     </div>
